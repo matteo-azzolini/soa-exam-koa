@@ -13,6 +13,17 @@ dotenv.config();
 
 //
 const users = [];
+
+const posts = [
+  {
+    username: 'Kyle',
+    title: 'Post 1'
+  },
+  {
+    username: 'Jim',
+    title: 'Post 2'
+  }
+]
 //
 
 const app = new koa();
@@ -21,14 +32,26 @@ const router = new koaRouter();
 app.use(logger())
   .use(bodyParser())
   .use(router.routes())
-  .use(router.allowedMethods())
-  ;
+  .use(router.allowedMethods());
 
-router.get('/', (ctx) => {
-  ctx.body = {
-    name: 'lui',
-    author: 'cane',
-  };
+function authenticateToken(ctx, next) {
+  const authHeader = ctx.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token == null) ctx.throw(401);
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+
+    if (err) ctx.throw(403);
+    ctx.user = user;
+
+    next();
+  })
+}
+
+router.get('/', (ctx, next) => {
+  authenticateToken(ctx, next);
+  ctx.body = posts.filter(post => post.username === ctx.user.username);
 });
 
 router.get('/restaurants/:id', (ctx) => {
@@ -48,7 +71,7 @@ router.post('/auth/register', async (ctx) => {
     const hashedPassword = await bcrypt.hash(ctx.request.body.password, 10);
 
     const user = {
-      name: ctx.request.body.name,
+      username: ctx.request.body.username,
       password: hashedPassword,
     };
 
@@ -62,11 +85,11 @@ router.post('/auth/register', async (ctx) => {
 });
 
 function generateAccessToken(user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' })
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
 }
 
 router.post('/auth/login', async (ctx) => {
-  const user = users.find(user => user.name === ctx.request.body.name);
+  const user = users.find(user => user.username === ctx.request.body.username);
 
   if (user == null) {
     ctx.throw(400, 'Cannot find user');
@@ -76,8 +99,10 @@ router.post('/auth/login', async (ctx) => {
     if(await bcrypt.compare(ctx.request.body.password, user.password)) {
       const username = ctx.request.body.username
       const user = {
-        name: username,
+        username: username,
       };
+
+      console.log('login user', user);
     
       const accessToken = generateAccessToken(user);
 
