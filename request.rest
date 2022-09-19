@@ -1,0 +1,36 @@
+@DOMAIN = https://localhost
+@PORT = 8443
+@API_URL = {{DOMAIN}}:{{PORT}}
+
+###
+# AUTH
+###
+GET {{API_URL}}/users
+
+###
+
+POST {{API_URL}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Kyle",
+  "password": "password"
+}
+
+###
+
+POST {{API_URL}}/auth/login
+Content-Type: application/json
+
+{
+  "name": "Kyle",
+  "password": "password"
+}
+
+###
+
+GET {{API_URL}}/restaurants/123
+
+###
+
+GET {{API_URL}}
