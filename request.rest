@@ -1,6 +1,7 @@
 @DOMAIN = https://localhost
 @PORT = 8443
 @API_URL = {{DOMAIN}}:{{PORT}}
+@TOKEN =
 
 ###
 # AUTH
@@ -13,7 +14,7 @@ POST {{API_URL}}/auth/register
 Content-Type: application/json
 
 {
-  "username": "Kyle",
+  "username": "username",
   "password": "password"
 }
 
@@ -23,15 +24,36 @@ POST {{API_URL}}/auth/login
 Content-Type: application/json
 
 {
-  "username": "Kyle",
+  "username": "username",
   "password": "password"
 }
 
 ###
 
-GET {{API_URL}}/restaurants/123
+GET {{API_URL}}/restaurants
+Authorization: Bearer {{TOKEN}}
 
 ###
 
-GET {{API_URL}}
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikt5bGUiLCJpYXQiOjE2NjM2MjQ2NjEsImV4cCI6MTY2MzYyODI2MX0.LgSzTlU0pcH2dYl-xFZaTRhGB_JwL3rFpt8EVQi35BM
+GET {{API_URL}}/restaurants/123
+Authorization: Bearer {{TOKEN}}
+
+###
+
+POST {{API_URL}}/restaurants
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "name": "Pizza giustissima"
+}
+
+###
+
+PUT {{API_URL}}/restaurants/123
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "name": "Pizza giustissima"
+}

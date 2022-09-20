@@ -1,3 +1,3 @@
 # soa-exam-koa
 
-Simple Koajs api for Service-Oriented Architectures exam
+Simple API written with Koa js for Service-Oriented Architectures exam
