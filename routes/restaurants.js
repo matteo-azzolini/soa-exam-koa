@@ -12,7 +12,6 @@ function get(ctx, next) {
   authenticateToken(ctx, next);
 
   const restaurantId = parseInt(ctx.params.id);
-  const ownerId = parseInt(ctx.user.id);
 
   const restaurant = restaurants.find(({ id }) => id === restaurantId ) ;
 
@@ -35,8 +34,8 @@ function create(ctx, next) {
   const name = ctx.request.body.name;
 
   const restaurant = {
-    id: generateId(100, 999),
-    owner: `user/${ownerId}`,
+    id: generateId(),
+    owner: `users/${ownerId}`,
     name,
     meals: [],
   };

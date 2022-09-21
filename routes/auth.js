@@ -45,7 +45,7 @@ export async function register(ctx) {
     const hashedPassword = await bcrypt.hash(ctx.request.body.password, 10);
 
     const user = {
-      id: generateId(100, 999),
+      id: generateId(),
       role: ctx.request.body.role,
       username: ctx.request.body.username,
       password: hashedPassword,

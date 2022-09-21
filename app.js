@@ -7,6 +7,7 @@ import http from "http";
 import https from "https";
 import { getUsers, register, login, authenticateToken } from "./routes/auth.js"
 import restaurants from "./routes/restaurants.js"
+import meals from "./routes/meals.js"
 
 const isJest = process.env.JEST_WORKER_ID !== undefined;
 
@@ -38,6 +39,12 @@ router.get('/restaurants/:id',    restaurants.get);
 router.post('/restaurants',       restaurants.create);
 router.put('/restaurants/:id',    restaurants.update);
 router.delete('/restaurants/:id', restaurants.delete);
+
+router.get('/meals',              meals.getAll);
+router.get('/meals/:id',          meals.get);
+router.post('/meals',             meals.create);
+router.put('/meals/:id',          meals.update);
+router.delete('/meals/:id',       meals.delete);
 
 const options = {
   key: fs.readFileSync('cert/key.pem'),

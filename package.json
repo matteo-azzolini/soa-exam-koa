@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon node app.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest --watch"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "keywords": [],
   "author": "",
