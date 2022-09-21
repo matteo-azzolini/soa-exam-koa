@@ -3,7 +3,7 @@ import app from '../app/app.js';
 
 let server;
 let accessToken;
-let createdRestaurantId;
+let createdMealId;
 
 beforeAll(() => { server = app.listen(1337); });
 
@@ -33,32 +33,76 @@ async function customerLogin() {
   accessToken = response.body.accessToken;
 }
 
-describe('/restaurants OWNER', () => {
+describe('/meals OWNER', () => {
   beforeAll(ownerLogin);
 
-  it('GET ALL     - should return 200', async () => {
+  it('GET ? 123   - should return 200', async () => {
     await request(server)
-      .get('/restaurants')
+      .get('/meals')
       .set('Authorization', `Bearer ${accessToken}`)
+      .query({ restaurantId: 123 })
       .expect(200)
       .expect([
         {
-          id: 123,
-          name: 'Pizza giusta',
-          owner: 'users/882',
-          meals: [
-            'meals/111',
-            'meals/222',
-          ],
+          "id": 111,
+          "name": "Margherita",
+          "owner": "users/882",
+          "restaurant": "restaurants/123"
+        },
+        {
+          "id": 222,
+          "name": "Diavola",
+          "owner": "users/882",
+          "restaurant": "restaurants/123"
         }
       ]);
   });
 
-  it('GET/123     - should return 200', async () => {
+  it('GET/111     - should return 200', async () => {
     await request(server)
-      .get('/restaurants/9999999999')
+      .get('/meals/9999999999')
       .set('Authorization', `Bearer ${accessToken}`)
       .expect(404);
+
+    await request(server)
+      .get('/meals/111')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(200)
+      .expect({
+        "id": 111,
+        "name": "Margherita",
+        "owner": "users/882",
+        "restaurant": "restaurants/123"
+      });
+  });
+
+  it('POST        - should return 201', async () => {
+    await request(server)
+      .post('/meals')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({
+        "name": "Capricciosa",
+        "restaurant": "restaurants/999999999"
+      })
+      .expect(404)
+
+    const response = await request(server)
+      .post('/meals')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({
+        "name": "Capricciosa",
+        "restaurant": "restaurants/123"
+      })
+      .expect(201)
+
+    expect(response.body.id).toEqual(expect.any(Number));
+    expect(response.body).toStrictEqual(expect.objectContaining({
+      name: "Capricciosa",
+      owner: 'users/882',
+      restaurant: "restaurants/123"
+    }));
+
+    createdMealId = response.body.id;
 
     await request(server)
       .get('/restaurants/123')
@@ -71,96 +115,46 @@ describe('/restaurants OWNER', () => {
           meals: [
             'meals/111',
             'meals/222',
+            `meals/${createdMealId}`,
           ],
       });
   });
 
-  it('POST        - should return 201', async () => {
-    const response = await request(server)
-      .post('/restaurants')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .send({
-        "name": "Pizza giustissima"
-      })
-      .expect(201)
-
-    expect(response.body.id).toEqual(expect.any(Number));
-    expect(response.body).toStrictEqual(expect.objectContaining({
-      name: 'Pizza giustissima',
-      owner: 'users/882',
-      meals: []
-    }));
-
-    createdRestaurantId = response.body.id;
-  });
-
-  it('PUT/123     - should return 200', async () => {
+  it('PUT/111     - should return 200', async () => {
     await request(server)
       .put('/restaurants/9999999999')
       .set('Authorization', `Bearer ${accessToken}`)
       .expect(404);
 
      await request(server)
-      .put('/restaurants/123')
+      .put('/meals/111')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        "name": "Pizza giusta 2.0"
+        name: "Bufala"
       })
       .expect(200)
       .expect({
-        id: 123,
-        name: 'Pizza giusta 2.0',
-        owner: 'users/882',
-        meals: [
-          'meals/111',
-          'meals/222',
-        ],
+        id: 111,
+        name: "Bufala",
+        owner: "users/882",
+        restaurant: "restaurants/123"
     });
   });
 
   it('DELETE/XXX  - should return 200', async () => {
     await request(server)
-      .delete('/restaurants/9999999999')
+      .delete('/meals/9999999999')
       .set('Authorization', `Bearer ${accessToken}`)
       .expect(404);
 
     await request(server)
-      .delete(`/restaurants/${createdRestaurantId}`)
+      .delete(`/meals/${createdMealId}`)
       .set('Authorization', `Bearer ${accessToken}`)
       .expect(200);
 
     // check delete
     await request(server)
-      .get(`/restaurants/${createdRestaurantId}`)
-      .set('Authorization', `Bearer ${accessToken}`)
-      .expect(404);
-  });
-});
-
-describe('/restaurants CUSTOMER', () => {
-  beforeAll(customerLogin);
-
-  it('GET ALL     - should return 200', async () => {
-    await request(server)
-      .get('/restaurants')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .expect(200)
-      .expect([
-        {
-          id: 123,
-          name: 'Pizza giusta 2.0',
-          owner: 'users/882',
-          meals: [
-            'meals/111',
-            'meals/222',
-          ],
-        },
-      ]);
-  });
-
-  it('GET/123     - should return 200', async () => {
-    await request(server)
-      .get('/restaurants/9999999999')
+      .get(`/meals/${createdMealId}`)
       .set('Authorization', `Bearer ${accessToken}`)
       .expect(404);
 
@@ -170,7 +164,7 @@ describe('/restaurants CUSTOMER', () => {
       .expect(200)
       .expect({
           id: 123,
-          name: 'Pizza giusta 2.0',
+          name: 'Pizza giusta',
           owner: 'users/882',
           meals: [
             'meals/111',
@@ -178,30 +172,75 @@ describe('/restaurants CUSTOMER', () => {
           ],
       });
   });
+});
+
+describe('/meals CUSTOMER', () => {
+  beforeAll(customerLogin);
+
+  it('GET ? 123   - should return 200', async () => {
+    await request(server)
+      .get('/meals')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .query({ restaurantId: 123 })
+      .expect(200)
+      .expect([
+        {
+          "id": 111,
+          "name": "Bufala",
+          "owner": "users/882",
+          "restaurant": "restaurants/123"
+        },
+        {
+          "id": 222,
+          "name": "Diavola",
+          "owner": "users/882",
+          "restaurant": "restaurants/123"
+        }
+      ]);
+  });
+
+  it('GET/111     - should return 200', async () => {
+    await request(server)
+      .get('/meals/9999999999')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(404);
+
+    await request(server)
+      .get('/meals/111')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(200)
+      .expect({
+        "id": 111,
+        "name": "Bufala",
+        "owner": "users/882",
+        "restaurant": "restaurants/123"
+      });
+  });
 
   it('POST        - should return 403', async () => {
     await request(server)
-      .post('/restaurants')
+      .post('/meals')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        "name": "Pizza giustissima"
+        name: "Capricciosa",
+        restaurant: "restaurants/123"
       })
       .expect(403)
   });
 
-  it('PUT/123     - should return 403', async () => {
+  it('PUT/111     - should return 403', async () => {
      await request(server)
-      .put('/restaurants/123')
+      .put('/meals/111')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        "name": "Pizza giusta 2.0"
+        name: "Bufala"
       })
       .expect(403);
   });
 
-  it('DELETE/123  - should return 403', async () => {
+  it('DELETE/111  - should return 403', async () => {
      await request(server)
-      .delete(`/restaurants/123`)
+      .delete(`/meals/111`)
       .set('Authorization', `Bearer ${accessToken}`)
       .expect(403);
   });

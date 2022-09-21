@@ -6,7 +6,7 @@
   "scripts": {
     "start:http": "nodemon node http_server.js",
     "start:https": "nodemon node https_server.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --verbose"
   },
   "keywords": [],
   "author": "",
