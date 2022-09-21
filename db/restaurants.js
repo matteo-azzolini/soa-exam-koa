@@ -1,4 +1,4 @@
-[
+export default [
   {
     "id": 123,
     "name": "Pizza giusta",

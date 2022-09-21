@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import * as dotenv from 'dotenv';
 import { between } from "../utils.js";
-import users from "../db/users.json" assert { type: "json" };
+import users from "../db/users.js";
 
 dotenv.config();
 
@@ -20,8 +20,6 @@ export function authenticateToken(ctx, next) {
 
     if (err) ctx.throw(403);
     ctx.user = user;
-
-    console.log('auth', user);
 
     next();
   })

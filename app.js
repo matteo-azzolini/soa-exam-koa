@@ -8,23 +8,16 @@ import https from "https";
 import { getUsers, register, login, authenticateToken } from "./routes/auth.js"
 import restaurants from "./routes/restaurants.js"
 
-//
-const posts = [
-  {
-    username: 'Kyle',
-    title: 'Post 1'
-  },
-  {
-    username: 'Jim',
-    title: 'Post 2'
-  }
-]
-//
+const isJest = process.env.JEST_WORKER_ID !== undefined;
 
 const app = new koa();
 const router = new koaRouter();
 
-app.use(logger())
+if (!isJest) {
+  app.use(logger())
+}
+
+app
   .use(bodyParser())
   .use(router.routes())
   .use(router.allowedMethods());
@@ -34,19 +27,24 @@ router.get('/', (ctx, next) => {
   ctx.body = posts.filter(post => post.username === ctx.user.username);
 });
 
+// TODO
 router.get('/users', getUsers);
 
-router.post('/auth/register', register);
-router.post('/auth/login', login);
+router.post('/register', register);
+router.post('/login', login);
 
 router.get('/restaurants',      restaurants.getAll);
 router.get('/restaurants/:id',  restaurants.get);
 router.post('/restaurants',     restaurants.create);
+router.put('/restaurants/:id',     restaurants.update);
 
 const options = {
   key: fs.readFileSync('cert/key.pem'),
   cert: fs.readFileSync('cert/cert.pem')
 };
 
-http.createServer(app.callback()).listen(8080);
-https.createServer(options, app.callback()).listen(8443);
+const server = isJest
+  ? http.createServer(app.callback()).listen(8080)
+  : https.createServer(options, app.callback()).listen(8443);
+
+export default server;

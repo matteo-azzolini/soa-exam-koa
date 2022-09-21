@@ -10,7 +10,7 @@ GET {{API_URL}}/users
 
 ###
 
-POST {{API_URL}}/auth/register
+POST {{API_URL}}/register
 Content-Type: application/json
 
 {
@@ -20,7 +20,7 @@ Content-Type: application/json
 
 ###
 
-POST {{API_URL}}/auth/login
+POST {{API_URL}}/login
 Content-Type: application/json
 
 {

@@ -1,4 +1,4 @@
-import restaurants from "../db/restaurants.json" assert { type: "json" };
+import restaurants from "../db/restaurants.js";
 import { between } from "../utils.js";
 import { authenticateToken } from "./auth.js"
 
@@ -29,7 +29,11 @@ function get(ctx, next) {
     return id === restaurantId && getId(owner) === ownerId
   }) ;
 
-  ctx.body = restaurant;
+  if (restaurant) {
+    ctx.body = restaurant;
+  } else {
+    ctx.throw(404);
+  }
 };
 
 function create(ctx, next) {
@@ -51,8 +55,31 @@ function create(ctx, next) {
   ctx.body = restaurant;
 }
 
+function update(ctx, next) {
+  authenticateToken(ctx, next);
+
+  const restaurantId = parseInt(ctx.params.id);
+  const ownerId = parseInt(ctx.user.id);
+
+  const index = restaurants.findIndex(({ id, owner }) => {
+    return id === restaurantId && getId(owner) === ownerId
+  }) ;
+
+  if (index !== -1) {
+    restaurants[index] = {
+      ...restaurants[index],
+      ...ctx.request.body,
+    }
+
+    ctx.body = restaurants[index];
+  } else {
+    ctx.throw(404);
+  }
+}
+
 export default {
   getAll,
   get,
   create,
+  update,
 }
