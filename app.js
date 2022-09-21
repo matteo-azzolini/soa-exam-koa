@@ -33,10 +33,11 @@ router.get('/users', getUsers);
 router.post('/register', register);
 router.post('/login', login);
 
-router.get('/restaurants',      restaurants.getAll);
-router.get('/restaurants/:id',  restaurants.get);
-router.post('/restaurants',     restaurants.create);
-router.put('/restaurants/:id',  restaurants.update);
+router.get('/restaurants',        restaurants.getAll);
+router.get('/restaurants/:id',    restaurants.get);
+router.post('/restaurants',       restaurants.create);
+router.put('/restaurants/:id',    restaurants.update);
+router.delete('/restaurants/:id', restaurants.delete);
 
 const options = {
   key: fs.readFileSync('cert/key.pem'),

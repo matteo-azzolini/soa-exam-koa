@@ -73,9 +73,33 @@ function update(ctx, next) {
   }
 }
 
+function deleteFn(ctx, next) {
+  authenticateToken(ctx, next);
+
+  if (isCustomer(ctx.user)) {
+    ctx.throw(403);
+  }
+
+  const restaurantId = parseInt(ctx.params.id);
+  const ownerId = parseInt(ctx.user.id);
+
+  const index = restaurants.findIndex(({ id }) => id === restaurantId);
+
+  if (index === -1) {
+    ctx.throw(404);
+  } else if (getId(restaurants[index].owner) !== ownerId) {
+    ctx.throw(403);
+  } else {
+    restaurants.splice(index, 1);
+
+    ctx.status = 200;
+  }
+}
+
 export default {
   getAll,
   get,
   create,
   update,
+  delete: deleteFn,
 }
