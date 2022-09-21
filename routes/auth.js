@@ -1,10 +1,14 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import * as dotenv from 'dotenv';
-import { between } from "../utils.js";
+import { generateId } from "../utils.js";
 import users from "../db/users.js";
 
 dotenv.config();
+
+export function isCustomer(user) {
+  return user.role === 'CUSTOMER';
+}
 
 function generateAccessToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
@@ -41,7 +45,8 @@ export async function register(ctx) {
     const hashedPassword = await bcrypt.hash(ctx.request.body.password, 10);
 
     const user = {
-      id: between(100, 999),
+      id: generateId(100, 999),
+      role: ctx.request.body.role,
       username: ctx.request.body.username,
       password: hashedPassword,
     };
@@ -66,6 +71,7 @@ export async function login(ctx) {
     if(await bcrypt.compare(ctx.request.body.password, user.password)) {
       const jwtUser = {
         id: user.id,
+        role: user.role,
       };
     
       const accessToken = generateAccessToken(jwtUser);

@@ -36,7 +36,7 @@ router.post('/login', login);
 router.get('/restaurants',      restaurants.getAll);
 router.get('/restaurants/:id',  restaurants.get);
 router.post('/restaurants',     restaurants.create);
-router.put('/restaurants/:id',     restaurants.update);
+router.put('/restaurants/:id',  restaurants.update);
 
 const options = {
   key: fs.readFileSync('cert/key.pem'),

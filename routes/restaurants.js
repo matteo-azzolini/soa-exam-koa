@@ -1,22 +1,11 @@
 import restaurants from "../db/restaurants.js";
-import { between } from "../utils.js";
-import { authenticateToken } from "./auth.js"
-
-// utils
-function getId(url) {
-  const stringId = url.substring(url.lastIndexOf('/') + 1);
-  const id = Number(stringId);
-  return id;
-}
+import { getId, generateId } from "../utils.js";
+import { isCustomer, authenticateToken } from "./auth.js"
 
 function getAll(ctx, next) {
   authenticateToken(ctx, next);
 
-  const ownerId = ctx.user.id;
-
-  const restaurant = restaurants.filter(restaurant => ownerId === getId(restaurant.owner));
-
-  ctx.body = restaurant;
+  ctx.body = restaurants;
 };
 
 function get(ctx, next) {
@@ -25,9 +14,7 @@ function get(ctx, next) {
   const restaurantId = parseInt(ctx.params.id);
   const ownerId = parseInt(ctx.user.id);
 
-  const restaurant = restaurants.find(({ id, owner }) => {
-    return id === restaurantId && getId(owner) === ownerId
-  }) ;
+  const restaurant = restaurants.find(({ id }) => id === restaurantId ) ;
 
   if (restaurant) {
     ctx.body = restaurant;
@@ -39,12 +26,16 @@ function get(ctx, next) {
 function create(ctx, next) {
   authenticateToken(ctx, next);
 
+  if (isCustomer(ctx.user)) {
+    ctx.throw(403);
+  }
+
   const ownerId = parseInt(ctx.user.id);
 
   const name = ctx.request.body.name;
 
   const restaurant = {
-    id: between(100, 999),
+    id: generateId(100, 999),
     owner: `user/${ownerId}`,
     name,
     meals: [],
@@ -52,28 +43,33 @@ function create(ctx, next) {
 
   restaurants.push(restaurant);
 
+  ctx.status = 201;
   ctx.body = restaurant;
 }
 
 function update(ctx, next) {
   authenticateToken(ctx, next);
 
+  if (isCustomer(ctx.user)) {
+    ctx.throw(403);
+  }
+
   const restaurantId = parseInt(ctx.params.id);
   const ownerId = parseInt(ctx.user.id);
 
-  const index = restaurants.findIndex(({ id, owner }) => {
-    return id === restaurantId && getId(owner) === ownerId
-  }) ;
+  const index = restaurants.findIndex(({ id }) => id === restaurantId);
 
-  if (index !== -1) {
+  if (index === -1) {
+    ctx.throw(404);
+  } else if (getId(restaurants[index].owner) !== ownerId) {
+    ctx.throw(403);
+  } else {
     restaurants[index] = {
       ...restaurants[index],
       ...ctx.request.body,
     }
 
     ctx.body = restaurants[index];
-  } else {
-    ctx.throw(404);
   }
 }
 
