@@ -2,9 +2,6 @@ import koa from "koa";
 import koaRouter from "koa-router";
 import bodyParser from "koa-bodyparser";
 import logger from "koa-logger";
-import fs from "fs";
-import http from "http";
-import https from "https";
 import { getUsers, register, login, authenticateToken } from "./routes/auth.js"
 import restaurants from "./routes/restaurants.js"
 import meals from "./routes/meals.js"
@@ -46,13 +43,4 @@ router.post('/meals',             meals.create);
 router.put('/meals/:id',          meals.update);
 router.delete('/meals/:id',       meals.delete);
 
-const options = {
-  key: fs.readFileSync('cert/key.pem'),
-  cert: fs.readFileSync('cert/cert.pem')
-};
-
-const server = isJest
-  ? http.createServer(app.callback()).listen(8080)
-  : https.createServer(options, app.callback()).listen(8443);
-
-export default server;
+export default app;

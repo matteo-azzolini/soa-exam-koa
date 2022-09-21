@@ -1,14 +1,16 @@
 import request from 'supertest';
-import server from '../app.js';
+import app from '../app/app.js';
+
+let server;
 
 let accessToken;
 
 let createdRestaurantId;
 let createdMealId;
 
-afterAll(() => {
-  server.close();
-});
+beforeAll(() => { server = app.listen(1337); });
+
+afterAll(() => { server.close(); });
 
 async function ownerLogin() {
   const response = await request(server)

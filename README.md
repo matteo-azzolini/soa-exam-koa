@@ -4,7 +4,7 @@ Simple API written with Koa js for Service-Oriented Architectures exam
 
 ---
 
-Examples of http requests can be found in [request.rest](./request.rest) file
+Examples of http requests can be found in [requests.rest](./requests.rest) file
 
 ## Run
 
@@ -13,9 +13,14 @@ Install dependencies
 npm install
 ```
 
-Start server
+Start http server
 ```
-npm run start
+npm run start:http
+```
+
+Start https server (require cert)
+```
+npm run start:https
 ```
 
 Run tests

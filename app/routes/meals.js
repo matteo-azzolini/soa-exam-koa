@@ -1,5 +1,5 @@
-import meals from "../db/meals.js";
-import restaurants from "../db/restaurants.js";
+import meals from "../../db/meals.js";
+import restaurants from "../../db/restaurants.js";
 import { getId, generateId } from "../utils.js";
 import { isCustomer, authenticateToken } from "./auth.js"
 
