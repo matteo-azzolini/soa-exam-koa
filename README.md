@@ -1,10 +1,12 @@
 # soa-exam-koa
 
-Simple Rest API written with Koa js for Service-Oriented Architectures exam
+Simple Rest API for Service-Oriented Architectures exam
 
----
+Written with [Koa js](https://github.com/koajs/koa)
 
-Examples of http requests can be found in [requests.rest](./requests.rest) file
+## Requests example
+
+Examples of http requests can be found in [requests.rest](./requests.rest) file or inside [./test](./test/) directory
 
 ## Run
 
