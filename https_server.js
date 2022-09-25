@@ -7,6 +7,4 @@ const options = {
   cert: fs.readFileSync('cert/cert.pem')
 };
 
-const server = https.createServer(options, app.callback()).listen(8443);
-
-export default server;
+https.createServer(options, app.callback()).listen(process.env.HTTPS_PORT);

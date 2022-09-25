@@ -5,7 +5,7 @@ let server;
 let accessToken;
 let createdMealId;
 
-beforeAll(() => { server = app.listen(1337); });
+beforeAll(() => { server = app.listen(process.env.JEST_PORT); });
 
 afterAll(() => { server.close(); });
 

@@ -4,7 +4,7 @@ import app from '../app/app.js';
 let server;
 let accessToken;
 
-beforeAll(() => { server = app.listen(1337); });
+beforeAll(() => { server = app.listen(process.env.JEST_PORT); });
 
 afterAll(() => { server.close(); });
 

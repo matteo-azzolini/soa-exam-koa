@@ -8,6 +8,12 @@ Written with [Koa js](https://github.com/koajs/koa)
 
 Examples of http requests can be found in [requests.rest](./requests.rest) file or inside [./test](./test/) directory
 
+## Setup
+
+todo token
+
+[.env](./.env)
+
 ## Run
 
 Install dependencies

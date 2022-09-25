@@ -1,10 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import * as dotenv from 'dotenv';
 import { generateId } from "../utils.js";
 import users from "../../db/users.js";
-
-dotenv.config();
 
 export function isCustomer(user) {
   return user.role === 'CUSTOMER';

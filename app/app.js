@@ -6,6 +6,9 @@ import { getUsers, register, login, authenticateToken } from "./routes/auth.js"
 import restaurants from "./routes/restaurants.js"
 import meals from "./routes/meals.js"
 import orders from "./routes/orders.js"
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const isJest = process.env.JEST_WORKER_ID !== undefined;
 
