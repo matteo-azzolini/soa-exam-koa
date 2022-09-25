@@ -5,6 +5,7 @@ import logger from "koa-logger";
 import { getUsers, register, login, authenticateToken } from "./routes/auth.js"
 import restaurants from "./routes/restaurants.js"
 import meals from "./routes/meals.js"
+import orders from "./routes/orders.js"
 
 const isJest = process.env.JEST_WORKER_ID !== undefined;
 
@@ -42,5 +43,9 @@ router.get('/meals/:id',          meals.get);
 router.post('/meals',             meals.create);
 router.put('/meals/:id',          meals.update);
 router.delete('/meals/:id',       meals.delete);
+
+router.get('/orders',             orders.getAll);
+router.get('/orders/:id',         orders.get);
+router.post('/orders',            orders.create);
 
 export default app;

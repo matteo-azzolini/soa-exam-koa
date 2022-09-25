@@ -10,6 +10,10 @@ export function isCustomer(user) {
   return user.role === 'CUSTOMER';
 }
 
+export function isOwner(user) {
+  return user.role === 'OWNER';
+}
+
 function generateAccessToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
 }
