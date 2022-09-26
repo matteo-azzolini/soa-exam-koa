@@ -1,16 +1,20 @@
-import meals from "../../db/meals.js";
-import restaurants from "../../db/restaurants.js";
-import { getId, generateId } from "../utils.js";
-import { isCustomer, authenticateToken } from "./auth.js"
+import { getId } from "../utils.js";
+import { authenticateToken, isOwner } from "./auth.js"
+import { findRestaurantById } from '../services/restaurants';
+import {
+  getMealsByRestaurant,
+  findMealById,
+  createMeal,
+  updateMeal,
+  deleteMeal,
+} from '../services/meals';
 
 function getAll(ctx, next) {
   authenticateToken(ctx, next);
 
   const restaurantId = parseInt(ctx.query.restaurantId);
 
-  const restaurantMeals = meals.filter(({ restaurant }) => getId(restaurant) === restaurantId ) ;
-
-  ctx.body = restaurantMeals;
+  ctx.body = getMealsByRestaurant(restaurantId);
 };
 
 function get(ctx, next) {
@@ -18,107 +22,83 @@ function get(ctx, next) {
 
   const mealId = parseInt(ctx.params.id);
 
-  const meal = meals.find(({ id }) => id === mealId ) ;
+  const meal = findMealById(mealId);
 
-  if (meal) {
-    ctx.body = meal;
-  } else {
+  if (!meal) {
     ctx.throw(404);
   }
+
+  ctx.body = meal;
 };
 
 function create(ctx, next) {
   authenticateToken(ctx, next);
 
-  if (isCustomer(ctx.user)) {
+  if (!isOwner(ctx.user)) {
     ctx.throw(403);
   }
+
+  const ownerId = parseInt(ctx.user.id);
 
   const name = ctx.request.body.name;
   const restaurantId = getId(ctx.request.body.restaurant);
 
-  const ownerId = parseInt(ctx.user.id);
+  const restaurant = findRestaurantById(restaurantId);
 
-  const restaurantIndex = restaurants.findIndex(({ id }) => id === restaurantId);
-
-  if (restaurantIndex === -1) {
+  if (!restaurant) {
     ctx.throw(404);
-  } else if (getId(restaurants[restaurantIndex].owner) !== ownerId) {
+  } else if (getId(restaurant.owner) !== ownerId) {
     ctx.throw(403);
   }
 
-  const mealId = generateId();
-
-  const meal = {
-    id: mealId,
-    name,
-    owner: `users/${ownerId}`,
-    restaurant: `restaurants/${restaurantId}`,
-  }
-
-  meals.push(meal);
-
-  restaurants[restaurantIndex].meals.push(`meals/${mealId}`);
-
+  ctx.body = createMeal(ownerId, name, restaurantId);
   ctx.status = 201;
-  ctx.body = meal;
 }
 
 function update(ctx, next) {
   authenticateToken(ctx, next);
 
-  if (isCustomer(ctx.user)) {
+  if (!isOwner(ctx.user)) {
     ctx.throw(403);
   }
 
-  const mealId = parseInt(ctx.params.id);
   const ownerId = parseInt(ctx.user.id);
 
-  const index = meals.findIndex(({ id }) => id === mealId);
+  const mealId = parseInt(ctx.params.id);
 
-  if (index === -1) {
+  const meal = findMealById(mealId);
+
+  if (!meal) {
     ctx.throw(404);
-  } else if (getId(meals[index].owner) !== ownerId) {
+  } else if (getId(meal.owner) !== ownerId) {
     ctx.throw(403);
-  } else {
-    meals[index] = {
-      ...meals[index],
-      ...ctx.request.body,
-    }
-
-    ctx.body = meals[index];
   }
+
+  ctx.body = updateMeal(mealId, ctx.request.body);
 }
 
 function deleteFn(ctx, next) {
   authenticateToken(ctx, next);
 
-  if (isCustomer(ctx.user)) {
+  if (!isOwner(ctx.user)) {
     ctx.throw(403);
   }
 
-  const mealId = parseInt(ctx.params.id);
   const ownerId = parseInt(ctx.user.id);
 
-  const index = meals.findIndex(({ id }) => id === mealId);
+  const mealId = parseInt(ctx.params.id);
 
-  if (index === -1) {
+  const meal = findMealById(mealId);
+
+  if (!meal) {
     ctx.throw(404);
-  } else if (getId(meals[index].owner) !== ownerId) {
+  } else if (getId(meal.owner) !== ownerId) {
     ctx.throw(403);
-  } else {
-    const restaurantId = getId(meals[index].restaurant);
-
-    meals.splice(index, 1);
-
-    const restaurantIndex = restaurants.findIndex(({ id }) => id === restaurantId);
-
-    const restaurantMealIndex = restaurants[restaurantIndex].meals.findIndex(id => getId(id) === mealId);
-
-    restaurants[restaurantIndex].meals.splice(restaurantMealIndex, index);
-
-    ctx.status = 200;
   }
+
+  deleteMeal(meal);
+
+  ctx.status = 200;
 }
 
 export default {

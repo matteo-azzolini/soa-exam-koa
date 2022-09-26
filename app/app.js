@@ -24,11 +24,6 @@ app
   .use(router.routes())
   .use(router.allowedMethods());
 
-router.get('/', (ctx, next) => {
-  authenticateToken(ctx, next);
-  ctx.body = posts.filter(post => post.username === ctx.user.username);
-});
-
 // TODO
 router.get('/users', getUsers);
 

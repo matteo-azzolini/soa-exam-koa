@@ -1,11 +1,17 @@
-import restaurants from "../../db/restaurants.js";
-import { getId, generateId } from "../utils.js";
-import { isCustomer, authenticateToken } from "./auth.js"
+import { getId } from "../utils.js";
+import { authenticateToken, isOwner } from "./auth.js"
+import {
+  getAllRestaurants,
+  findRestaurantById,
+  createRestaurant,
+  updateRestaurant,
+  deleteRestaurant,
+} from '../services/restaurants';
 
 function getAll(ctx, next) {
   authenticateToken(ctx, next);
 
-  ctx.body = restaurants;
+  ctx.body = getAllRestaurants();
 };
 
 function get(ctx, next) {
@@ -13,19 +19,19 @@ function get(ctx, next) {
 
   const restaurantId = parseInt(ctx.params.id);
 
-  const restaurant = restaurants.find(({ id }) => id === restaurantId ) ;
+  const restaurant = findRestaurantById(restaurantId);
 
-  if (restaurant) {
-    ctx.body = restaurant;
-  } else {
+  if (!restaurant) {
     ctx.throw(404);
   }
+
+  ctx.body = restaurant;
 };
 
 function create(ctx, next) {
   authenticateToken(ctx, next);
 
-  if (isCustomer(ctx.user)) {
+  if (!isOwner(ctx.user)) {
     ctx.throw(403);
   }
 
@@ -33,14 +39,7 @@ function create(ctx, next) {
 
   const name = ctx.request.body.name;
 
-  const restaurant = {
-    id: generateId(),
-    owner: `users/${ownerId}`,
-    name,
-    meals: [],
-  };
-
-  restaurants.push(restaurant);
+  const restaurant = createRestaurant(ownerId, name);
 
   ctx.status = 201;
   ctx.body = restaurant;
@@ -49,50 +48,47 @@ function create(ctx, next) {
 function update(ctx, next) {
   authenticateToken(ctx, next);
 
-  if (isCustomer(ctx.user)) {
+  if (!isOwner(ctx.user)) {
     ctx.throw(403);
   }
 
-  const restaurantId = parseInt(ctx.params.id);
   const ownerId = parseInt(ctx.user.id);
 
-  const index = restaurants.findIndex(({ id }) => id === restaurantId);
+  const restaurantId = parseInt(ctx.params.id);
 
-  if (index === -1) {
+  const restaurant = findRestaurantById(restaurantId);
+
+  if (!restaurant) {
     ctx.throw(404);
-  } else if (getId(restaurants[index].owner) !== ownerId) {
+  } else if (getId(restaurant.owner) !== ownerId) {
     ctx.throw(403);
-  } else {
-    restaurants[index] = {
-      ...restaurants[index],
-      ...ctx.request.body,
-    }
-
-    ctx.body = restaurants[index];
   }
+
+  ctx.body = updateRestaurant(restaurantId, ctx.request.body)
 }
 
 function deleteFn(ctx, next) {
   authenticateToken(ctx, next);
 
-  if (isCustomer(ctx.user)) {
+  if (!isOwner(ctx.user)) {
     ctx.throw(403);
   }
 
-  const restaurantId = parseInt(ctx.params.id);
   const ownerId = parseInt(ctx.user.id);
 
-  const index = restaurants.findIndex(({ id }) => id === restaurantId);
+  const restaurantId = parseInt(ctx.params.id);  
 
-  if (index === -1) {
+  const restaurant = findRestaurantById(restaurantId);
+
+  if (!restaurant) {
     ctx.throw(404);
-  } else if (getId(restaurants[index].owner) !== ownerId) {
+  } else if (getId(restaurant.owner) !== ownerId) {
     ctx.throw(403);
-  } else {
-    restaurants.splice(index, 1);
-
-    ctx.status = 200;
   }
+
+  deleteRestaurant(restaurant);
+
+  ctx.status = 200;
 }
 
 export default {
