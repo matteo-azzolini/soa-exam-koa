@@ -32,7 +32,7 @@ async function customerLogin() {
   accessToken = response.body.accessToken;
 }
 
-describe('/meals OWNER', () => {
+describe('/orders OWNER', () => {
   beforeAll(ownerLogin);
 
   it('GET ALL     - should return 200', async () => {
@@ -88,9 +88,23 @@ describe('/meals OWNER', () => {
       })
       .expect(403)
   });
+
+  it('PUT/654     - should return 405', async () => {
+    await request(server)
+      .put('/orders/654')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(405);
+  });
+
+  it('DELETE/654  - should return 405', async () => {
+    await request(server)
+      .delete('/orders/654')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(405);
+  });
 });
 
-describe('/meals CUSTOMER', () => {
+describe('/orders CUSTOMER', () => {
   beforeAll(customerLogin);
 
   it('GET ALL     - should return 200', async () => {
@@ -205,5 +219,19 @@ describe('/meals CUSTOMER', () => {
           ],
         }
       ]);
+  });
+
+  it('PUT/654     - should return 405', async () => {
+    await request(server)
+      .put('/orders/654')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(405);
+  });
+
+  it('DELETE/654  - should return 405', async () => {
+    await request(server)
+      .delete('/orders/654')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(405);
   });
 });

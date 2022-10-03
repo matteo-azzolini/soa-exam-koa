@@ -12,7 +12,7 @@ export function isOwner(user) {
 }
 
 function generateAccessToken(user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
 }
 
 export function authenticateToken(ctx, next) {
@@ -42,50 +42,42 @@ export async function register(ctx) {
     ctx.throw(400, 'User already exists');
   }
 
-  try {
-    const hashedPassword = await bcrypt.hash(ctx.request.body.password, 10);
+  const hashedPassword = await bcrypt.hash(ctx.request.body.password, 10);
 
-    const user = {
-      id: generateId(),
-      role: ctx.request.body.role,
-      username: ctx.request.body.username,
-      password: hashedPassword,
-    };
+  const user = {
+    id: generateId(),
+    role: ctx.request.body.role,
+    username: ctx.request.body.username,
+    password: hashedPassword,
+  };
 
-    users.push(user);
+  users.push(user);
 
-    ctx.status = 201;
-  } catch (err) {
-    console.error(err);
-    ctx.throw(500);
-  }
+  ctx.status = 201;
 }
 
 export async function login(ctx) {
   const user = users.find(user => user.username === ctx.request.body.username);
 
   if (user == null) {
-    ctx.throw(400, 'Cannot find user');
+    ctx.throw(401);
   }
 
-  try {
-    if(await bcrypt.compare(ctx.request.body.password, user.password)) {
-      const jwtUser = {
-        id: user.id,
-        role: user.role,
-      };
-    
-      const accessToken = generateAccessToken(jwtUser);
+  const validPassword = await bcrypt.compare(ctx.request.body.password, user.password);
 
-      ctx.status = 202;
-      ctx.body = {
-        accessToken: accessToken,
-      };
-    } else {
-      ctx.throw(401);
-    }
-  } catch(err) {
-    console.error(err);
-    ctx.throw(500);
+  if (!validPassword) {
+    ctx.throw(401);
   }
+
+  const jwtUser = {
+    id: user.id,
+    role: user.role,
+  };
+
+  const accessToken = generateAccessToken(jwtUser);
+
+  ctx.status = 202;
+  ctx.body = {
+    accessToken: accessToken,
+  };
 }
