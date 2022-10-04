@@ -1,5 +1,5 @@
-import orders from "../../db/orders.js";
-import restaurants from "../../db/restaurants.js";
+import orders from "../../data/orders.js";
+import restaurants from "../../data/restaurants.js";
 import { getId, generateId } from "../utils.js";
 
 export function getOrdersByCustomer(customerId) {

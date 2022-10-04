@@ -1,4 +1,4 @@
-import restaurants from "../../db/restaurants.js";
+import restaurants from "../../data/restaurants.js";
 import { getId, generateId } from "../utils.js";
 
 export function hasMeals(restaurant, meals) {

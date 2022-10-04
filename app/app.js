@@ -2,11 +2,11 @@ import koa from "koa";
 import koaRouter from "koa-router";
 import bodyParser from "koa-bodyparser";
 import logger from "koa-logger";
-import { getUsers, register, login, authenticateToken } from "./routes/auth.js"
+import dotenv from 'dotenv';
+import { getUsers, register, login } from "./auth/auth.js"
 import restaurants from "./routes/restaurants.js"
 import meals from "./routes/meals.js"
 import orders from "./routes/orders.js"
-import dotenv from 'dotenv';
 
 dotenv.config();
 

@@ -3,12 +3,10 @@
 @API_URL = {{DOMAIN}}:{{PORT}}
 @TOKEN =
 
-###
-# AUTH
-###
+# TODO
 GET {{API_URL}}/users
 
-### OWNER REGISTRATION
+### REGISTRATION
 
 POST {{API_URL}}/register
 Content-Type: application/json
@@ -19,7 +17,7 @@ Content-Type: application/json
   "role": "OWNER"
 }
 
-### CUSTOMER REGISTRATION
+###
 
 POST {{API_URL}}/register
 Content-Type: application/json
@@ -30,7 +28,7 @@ Content-Type: application/json
   "role": "CUSTOMER"
 }
 
-###
+### LOGIN
 
 POST {{API_URL}}/login
 Content-Type: application/json
@@ -40,7 +38,7 @@ Content-Type: application/json
   "password": "password"
 }
 
-###
+### RESTAURANTS
 
 GET {{API_URL}}/restaurants
 Authorization: Bearer {{TOKEN}}
@@ -69,3 +67,8 @@ Content-Type: application/json
 {
   "name": "Pizza giustissima"
 }
+
+###
+
+DELETE {{API_URL}}/restaurants/390
+Authorization: Bearer {{TOKEN}}

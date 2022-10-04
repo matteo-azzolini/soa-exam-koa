@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { generateId } from "../utils.js";
-import users from "../../db/users.js";
+import users from "../../data/users.js";
 
 export function isCustomer(user) {
   return user.role === 'CUSTOMER';

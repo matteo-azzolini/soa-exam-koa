@@ -1,15 +1,15 @@
 import { getId } from "../utils.js";
-import { isCustomer, authenticateToken, isOwner } from "./auth.js"
+import { isCustomer, authenticateToken, isOwner } from "../auth/auth.js"
 import {
   hasMeals,
   findRestaurantById,
-} from '../services/restaurants';
+} from '../services/restaurants.js';
 import {
   getOrdersByCustomer,
   getOrdersByOwner,
   findOrderById,
   createOrder,
-} from '../services/orders'
+} from '../services/orders.js'
 
 function getAll(ctx, next) {
   authenticateToken(ctx, next);

@@ -1,12 +1,12 @@
 import { getId } from "../utils.js";
-import { authenticateToken, isOwner } from "./auth.js"
+import { authenticateToken, isOwner } from "../auth/auth.js"
 import {
   getAllRestaurants,
   findRestaurantById,
   createRestaurant,
   updateRestaurant,
   deleteRestaurant,
-} from '../services/restaurants';
+} from '../services/restaurants.js';
 
 function getAll(ctx, next) {
   authenticateToken(ctx, next);

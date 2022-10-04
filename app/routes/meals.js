@@ -1,13 +1,13 @@
 import { getId } from "../utils.js";
-import { authenticateToken, isOwner } from "./auth.js"
-import { findRestaurantById } from '../services/restaurants';
+import { authenticateToken, isOwner } from "../auth/auth.js"
+import { findRestaurantById } from '../services/restaurants.js';
 import {
   getMealsByRestaurant,
   findMealById,
   createMeal,
   updateMeal,
   deleteMeal,
-} from '../services/meals';
+} from '../services/meals.js';
 
 function getAll(ctx, next) {
   authenticateToken(ctx, next);
