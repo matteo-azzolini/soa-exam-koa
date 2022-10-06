@@ -14,16 +14,18 @@ Setup environement variables inside [./.env](./.env) file.
 
 ### Generate secret
 
-Set a value to
+> **Warning** It is mandatory to generate a secret to start the server
+
+Set a value to ACCESS_TOKEN_SECRET so that the server can sign jwt token for authentication
+
 ```properties
 # .env
 ACCESS_TOKEN_SECRET=$insert-secret
 ```
 
-> **Warning**: you need to generate an access token secret in order to sign jwt tokens
-
 Example of secret generation with `nodejs`:
-```shell
+
+```console
 node
 
 require('crypto').randomBytes(64).toString('hex')
@@ -45,7 +47,7 @@ npm install
 npm run start:http
 ```
 
-### Start https server (require cert)
+### Start https server
 
 > **Warning**: Requires cert
 ```
