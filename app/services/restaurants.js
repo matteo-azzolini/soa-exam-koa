@@ -1,5 +1,5 @@
 import restaurants from "../../data/restaurants.js";
-import { getId, generateId } from "../utils.js";
+import { getId, generateId } from "../utils/utils.js";
 
 export function hasMeals(restaurant, meals) {
   const mealsIds = meals.map(meal => getId(meal));

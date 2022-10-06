@@ -24,7 +24,7 @@ app
   .use(router.routes())
   .use(router.allowedMethods());
 
-// TODO
+// Debug only
 router.get('/users', getUsers);
 
 router.post('/register', register);

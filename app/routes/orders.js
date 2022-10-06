@@ -1,4 +1,4 @@
-import { getId } from "../utils.js";
+import { getId } from "../utils/utils.js";
 import { isCustomer, authenticateToken, isOwner } from "../auth/auth.js"
 import {
   hasMeals,

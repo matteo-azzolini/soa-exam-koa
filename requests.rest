@@ -1,9 +1,9 @@
-@DOMAIN = https://localhost
-@PORT = 8443
+@DOMAIN = http://localhost
+@PORT = 8080
 @API_URL = {{DOMAIN}}:{{PORT}}
 @TOKEN =
 
-# TODO
+# Debug only
 GET {{API_URL}}/users
 
 ### REGISTRATION
@@ -70,5 +70,5 @@ Content-Type: application/json
 
 ###
 
-DELETE {{API_URL}}/restaurants/390
+DELETE {{API_URL}}/restaurants/123
 Authorization: Bearer {{TOKEN}}

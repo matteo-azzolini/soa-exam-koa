@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { generateId } from "../utils.js";
+import { generateId } from "../utils/utils.js";
 import users from "../../data/users.js";
 
 export function isCustomer(user) {
@@ -30,7 +30,7 @@ export function authenticateToken(ctx, next) {
   })
 }
 
-// TODO
+// Debug only
 export function getUsers(ctx) {
   ctx.body = users;
 };

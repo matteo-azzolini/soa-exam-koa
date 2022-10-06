@@ -1,6 +1,6 @@
 import meals from "../../data/meals.js";
 import restaurants from "../../data/restaurants.js";
-import { getId, generateId } from "../utils.js";
+import { getId, generateId } from "../utils/utils.js";
 
 export function getMealsByRestaurant(restaurantId) {
   return meals.filter(({ restaurant }) => getId(restaurant) === restaurantId);
