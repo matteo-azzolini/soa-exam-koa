@@ -10,28 +10,50 @@ Examples of http requests can be found in [requests.rest](./requests.rest) file 
 
 ## Setup
 
-todo token
+Setup environement variables inside [./.env](./.env) file.
+
+### Generate secret
+
+Set a value to
+```properties
+# .env
+ACCESS_TOKEN_SECRET=$insert-secret
+```
+
+> **Warning**: you need to generate an access token secret in order to sign jwt tokens
+
+Example of secret generation with `nodejs`:
+```shell
+node
+
+require('crypto').randomBytes(64).toString('hex')
+```
 
 [.env](./.env)
 
 ## Run
 
-Install dependencies
+### Install dependencies
+
 ```
 npm install
 ```
 
-Start http server
+### Start http server
+
 ```
 npm run start:http
 ```
 
-Start https server (require cert)
+### Start https server (require cert)
+
+> **Warning**: Requires cert
 ```
 npm run start:https
 ```
 
-Run tests
+### Run tests
+
 ```
 npm run test
 ```
