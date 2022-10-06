@@ -10,9 +10,9 @@ Examples of http requests can be found in [requests.rest](./requests.rest) file 
 
 ## Setup
 
-Setup environement variables inside [./.env](./.env) file.
+Setup environement variables inside [.env](./.env) file.
 
-### Generate secret
+### ACCESS_TOKEN_SECRET
 
 > **Warning** It is mandatory to generate a secret to start the server
 
@@ -30,8 +30,6 @@ node
 
 require('crypto').randomBytes(64).toString('hex')
 ```
-
-[.env](./.env)
 
 ## Run
 
