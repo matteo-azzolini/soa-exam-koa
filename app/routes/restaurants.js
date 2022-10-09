@@ -64,7 +64,9 @@ function update(ctx, next) {
     ctx.throw(403);
   }
 
-  ctx.body = updateRestaurant(restaurantId, ctx.request.body)
+  const name = ctx.request.body.name;
+
+  ctx.body = updateRestaurant(restaurantId, { name });
 }
 
 function deleteFn(ctx, next) {

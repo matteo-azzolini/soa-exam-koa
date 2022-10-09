@@ -104,7 +104,10 @@ describe('/restaurants OWNER', () => {
       .put('/restaurants/123')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        "name": "Pizza giusta 2.0"
+        name: "Pizza giusta 2.0",
+        meals: [
+          'meals/9999999999',
+        ],
       })
       .expect(200)
       .expect({
